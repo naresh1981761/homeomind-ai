@@ -1,0 +1,4 @@
+import {NextResponse} from 'next/server';
+// Safe deterministic prototype. No external AI calls and no patient data sent to a model.
+const terms=[['Skin - itching',['itch','खुजली']],['Generalities - worse at night',['night','रात']],['Generalities - worse from heat',['heat','गर्मी']],['Mind - anxiety',['anxiety','चिंता','घबराहट']],['Skin - dryness',['dry','रूखी','सूखी']],['Head - hair falling',['hair fall','बाल झड़']],['Sleep - disturbed',['insomnia','नींद नहीं']]] as const;
+export async function POST(req:Request){let body;try{body=await req.json()}catch{return NextResponse.json({error:'Invalid JSON'},{status:400})}const text=String(body?.text||'').slice(0,12000).toLowerCase();return NextResponse.json({rubrics:terms.filter(([,keys])=>keys.some(k=>text.includes(k))).map(([name])=>({name,weight:2})),note:'Keyword-only demo: clinician must review every rubric.'})}
